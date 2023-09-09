@@ -15,9 +15,16 @@
 -- 2. Altered source versions must be plainly marked as such, and must not be
 --    misrepresented as being the original software.
 -- 3. This notice may not be removed or altered from any source distribution.
+print(_VERSION)
 
 -- Example Live2LOVE
 local love = require("love")
+
+local os = "mac"
+
+if os == "mac" then
+	package.cpath = package.cpath .. ";?.dylib"
+end
 local Live2LOVE = require("Live2LOVE")
 local modelObj, modelMotion, modelMesh
 local motionStr = "List of motions (press key number to change):\n"
@@ -27,8 +34,7 @@ print("Live2D Version "..Live2LOVE.Live2DVersion)
 
 function love.load()
 	-- Load model. loadModel expects model definition (JSON file)
-	--modelObj = Live2LOVE.loadModel("rev/model.model3.json")
-	modelObj = Live2LOVE.loadModel("Res/Haru/Haru.model3.json")
+	modelObj = Live2LOVE.loadModel("runtime/haru_greeter_t05.model3.json")
 	-- Get list of motions
 	modelMotion = modelObj:getMotionList()
 	-- Format motions. Faster & better approach is possible to handle the strings.
@@ -41,6 +47,7 @@ function love.load()
 	
 	-- Get model mesh
 	modelMesh = modelObj:getMesh()
+	love.window.setMode(800, 600, {resizable = true})
 end
 
 function love.update(dt)
