@@ -7,3 +7,5 @@ sln/**
 !sln/Live2LOVE.sln
 !sln/Live2LOVE/Live2LOVE.vcxproj
 !sln/Live2LOVE/Live2LOVE.vcxproj.filters
+demo/runtime/*
+thirdParty/*
