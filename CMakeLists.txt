@@ -28,8 +28,20 @@ if(MSVC)
 	option(LIVE2LOVE_MT "Build multi-thread (/MT) version of library" OFF)
 endif()
 
-# Add Live2D Cubism 3 SDK for Native library
-add_subdirectory("live2d/Core")
+# Cmake in core does not exist for sdk4+
+# add_subdirectory("live2d/Core")
+
+# Refer to live2d framework sample
+add_library(Live2DCubismCore STATIC IMPORTED)
+set(CORE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/live2d/Core)
+# Get architecture.
+EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+# Set library path and inlude path.
+set_target_properties(Live2DCubismCore
+  PROPERTIES
+    IMPORTED_LOCATION ${CORE_PATH}/lib/macos/${ARCHITECTURE}/libLive2DCubismCore.a
+    INTERFACE_INCLUDE_DIRECTORIES ${CORE_PATH}/include
+)
 
 # Live2LOVE sources
 set(LIVE2LOVE_SOURCE_FILES
@@ -147,9 +159,10 @@ else()
 		# so we can't link with it.
 		target_link_libraries(Live2LOVE ${LUA_LIBRARIES} ${CMAKE_CURRENT_SOURCE_DIR}/live2d/Core/dll/linux/x86_64/libLive2DCubismCore.so)
 	else()
-		target_link_libraries(Live2LOVE ${CSM_CORE_LIBS} ${LUA_LIBRARIES})
+    message("MAC")
+		target_link_libraries(Live2LOVE Live2DCubismCore ${LUA_LIBRARIES})
 	endif()
 endif()
 
-target_include_directories(Live2LOVE PRIVATE include live2d/Framework/src ${CSM_CORE_INCLUDE_DIR})
+target_include_directories(Live2LOVE PRIVATE include live2d/Framework/src live2d/Core/include)
 install(TARGETS Live2LOVE DESTINATION lib)
