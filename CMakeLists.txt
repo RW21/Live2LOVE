@@ -152,15 +152,17 @@ if(MSVC)
 	message(STATUS "Selected Live2D Core MSVC ver: ${_LIVE2LOVE_MSVC_LINK} (${_LIVE2LOVE_WINARCH})")
 else()
 	find_package(Lua 5.1 EXACT REQUIRED)
-	target_include_directories(Live2LOVE PRIVATE ${LUA_INCLUDE_DIR})
 	
 	if(UNIX AND NOT RPI AND NOT ANDROID AND NOT APPLE)
 		# Unfortunately libLive2DCubismCore.a (provided by ${CSM_CORE_LIBS}) is not compiled with fPIC
 		# so we can't link with it.
+		target_include_directories(Live2LOVE PRIVATE ${LUA_INCLUDE_DIR})
 		target_link_libraries(Live2LOVE ${LUA_LIBRARIES} ${CMAKE_CURRENT_SOURCE_DIR}/live2d/Core/dll/linux/x86_64/libLive2DCubismCore.so)
 	else()
-    message("MAC")
-		target_link_libraries(Live2LOVE Live2DCubismCore ${LUA_LIBRARIES})
+		# todo properly branch for mac
+		message("MAC")
+		SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -undefined dynamic_lookup")
+		target_link_libraries(Live2LOVE Live2DCubismCore)
 	endif()
 endif()
 
